@@ -2,84 +2,337 @@
 <html lang="vi">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Chiến binh xanh</title>
+  <meta name="theme-color" content="#246B3A" />
   <meta property="og:title" content="Chiến binh xanh" />
   <meta property="og:description" content="Xem bảng xếp hạng và cùng bảo vệ môi trường 🌱" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
   <style>
-    :root { color-scheme: light; }
-    * { box-sizing: border-box; }
+    :root {
+      --forest: #246B3A;
+      --forest-deep: #1C5530;
+      --leaf: #5BB85D;
+      --sun: #FFC857;
+      --cream: #FFFBEC;
+      --ink: #173325;
+      --muted: #5E7D67;
+      color-scheme: light;
+    }
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    html, body { height: 100%; }
     body {
       margin: 0;
-      min-height: 100vh;
+      font-family: "Nunito", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      color: var(--ink);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background: linear-gradient(160deg, #246B3A, #5BB85D);
-      color: #fff;
       padding: 24px;
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(160deg, #6CC56E 0%, var(--forest) 50%, var(--forest-deep) 100%);
+      background-size: 100% 200%;
+      animation: bgShift 14s ease-in-out infinite;
     }
-    .card {
-      max-width: 360px;
+    @keyframes bgShift {
+      0%, 100% { background-position: 50% 0%; }
+      50% { background-position: 50% 100%; }
+    }
+
+    /* Glowing sun behind the card */
+    .sun {
+      position: fixed;
+      top: -120px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 360px;
+      height: 360px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 200, 87, 0.55) 0%, rgba(255, 200, 87, 0) 70%);
+      animation: sunPulse 6s ease-in-out infinite;
+      pointer-events: none;
+      z-index: 0;
+    }
+    @keyframes sunPulse {
+      0%, 100% { transform: translateX(-50%) scale(1); opacity: 0.85; }
+      50% { transform: translateX(-50%) scale(1.12); opacity: 1; }
+    }
+
+    /* Layered hills at the bottom */
+    .hills {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
       width: 100%;
+      z-index: 0;
+      pointer-events: none;
+      line-height: 0;
+    }
+    .hills svg { width: 100%; height: auto; display: block; }
+    .hill-sway { transform-origin: 50% 100%; animation: sway 8s ease-in-out infinite; }
+    @keyframes sway {
+      0%, 100% { transform: translateX(0); }
+      50% { transform: translateX(-10px); }
+    }
+
+    /* Floating leaves */
+    .leaf {
+      position: fixed;
+      bottom: -40px;
+      font-size: 26px;
+      opacity: 0;
+      z-index: 0;
+      pointer-events: none;
+      user-select: none;
+      animation: rise linear infinite;
+    }
+    @keyframes rise {
+      0% { transform: translateY(0) translateX(0) rotate(0deg); opacity: 0; }
+      10% { opacity: 0.85; }
+      50% { transform: translateY(-55vh) translateX(30px) rotate(140deg); opacity: 0.7; }
+      90% { opacity: 0.3; }
+      100% { transform: translateY(-110vh) translateX(-20px) rotate(320deg); opacity: 0; }
+    }
+    .leaf.a { left: 10%; animation-duration: 11s; animation-delay: 0s; font-size: 30px; }
+    .leaf.b { left: 26%; animation-duration: 14s; animation-delay: 2s; }
+    .leaf.c { left: 44%; animation-duration: 9s; animation-delay: 1s; font-size: 22px; }
+    .leaf.d { left: 62%; animation-duration: 13s; animation-delay: 3.5s; font-size: 32px; }
+    .leaf.e { left: 78%; animation-duration: 10s; animation-delay: 0.8s; }
+    .leaf.f { left: 90%; animation-duration: 15s; animation-delay: 2.6s; font-size: 24px; }
+
+    .card {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      max-width: 360px;
+      background: var(--cream);
+      border-radius: 28px;
+      padding: 58px 26px 26px;
       text-align: center;
-      background: rgba(255, 255, 255, 0.10);
-      border: 1px solid rgba(255, 255, 255, 0.25);
-      border-radius: 24px;
-      padding: 32px 24px;
-      backdrop-filter: blur(6px);
+      box-shadow: 0 24px 60px rgba(11, 50, 28, 0.4);
+      animation: pop 0.55s cubic-bezier(0.2, 0.9, 0.3, 1.2) both;
     }
-    h1 { font-size: 22px; margin: 0 0 8px; letter-spacing: 0.5px; }
-    p { margin: 0 0 20px; opacity: 0.92; line-height: 1.4; }
+    @keyframes pop {
+      from { opacity: 0; transform: translateY(18px) scale(0.95); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    /* Emblem with pulsing glow ring + gentle bob */
+    .emblem {
+      position: absolute;
+      top: -38px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 80px;
+      animation: bob 3.2s ease-in-out infinite;
+    }
+    @keyframes bob {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50% { transform: translateX(-50%) translateY(-6px); }
+    }
+    .emblem::before {
+      content: "";
+      position: absolute;
+      inset: -8px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(91, 184, 93, 0.55), rgba(91, 184, 93, 0) 70%);
+      animation: ring 2.4s ease-in-out infinite;
+    }
+    @keyframes ring {
+      0%, 100% { transform: scale(0.9); opacity: 0.5; }
+      50% { transform: scale(1.25); opacity: 0; }
+    }
+    .emblem-core {
+      position: relative;
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: linear-gradient(160deg, var(--leaf), var(--forest));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 12px 26px rgba(11, 50, 28, 0.4);
+      border: 4px solid var(--cream);
+    }
+    .emblem-core svg { width: 42px; height: 42px; }
+
+    h1 { font-size: 24px; font-weight: 900; margin: 0 0 4px; letter-spacing: 0.2px; animation: fadeUp 0.5s ease 0.1s both; }
+    .subtitle { font-size: 13.5px; font-weight: 700; color: var(--muted); margin: 0 0 22px; animation: fadeUp 0.5s ease 0.18s both; }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .status {
+      display: flex; align-items: center; justify-content: center;
+      gap: 10px; min-height: 24px; margin-bottom: 22px;
+      color: var(--forest); font-weight: 700; font-size: 14px;
+      animation: fadeUp 0.5s ease 0.26s both;
+    }
+    .spinner {
+      width: 18px; height: 18px;
+      border: 3px solid rgba(36, 107, 58, 0.25);
+      border-top-color: var(--forest);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
     .btn {
-      display: inline-block;
+      position: relative;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      width: 100%;
       text-decoration: none;
-      font-weight: 700;
-      background: #fff;
-      color: #246B3A;
-      padding: 12px 22px;
-      border-radius: 999px;
-      margin-top: 8px;
+      font-family: inherit; font-weight: 800; font-size: 16px;
+      padding: 14px 18px; border-radius: 999px; margin-top: 10px;
+      transition: transform 0.08s ease, box-shadow 0.2s ease;
+      cursor: pointer; overflow: hidden;
+      animation: fadeUp 0.5s ease 0.32s both;
     }
-    .hidden { display: none; }
+    .btn:active { transform: scale(0.97); }
+    .btn-primary {
+      color: #fff;
+      background: linear-gradient(160deg, var(--leaf), var(--forest));
+      box-shadow: 0 10px 22px rgba(36, 107, 58, 0.42);
+      border: none;
+    }
+    /* Shine sweep on the primary button */
+    .btn-primary::after {
+      content: "";
+      position: absolute; top: 0; left: -60%;
+      width: 40%; height: 100%;
+      background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.45), transparent);
+      transform: skewX(-20deg);
+      animation: shine 3.2s ease-in-out infinite;
+    }
+    @keyframes shine {
+      0% { left: -60%; }
+      55%, 100% { left: 140%; }
+    }
+    .btn-secondary {
+      color: var(--forest); background: transparent;
+      border: 2px solid rgba(36, 107, 58, 0.35);
+      animation: fadeUp 0.5s ease 0.38s both;
+    }
+    .btn svg { width: 18px; height: 18px; position: relative; z-index: 1; }
+
+    .footer { margin-top: 20px; font-size: 12px; font-weight: 700; color: var(--muted); animation: fadeUp 0.5s ease 0.44s both; }
+    .hidden { display: none !important; }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; }
+    }
   </style>
 </head>
 <body>
+  <div class="sun" aria-hidden="true"></div>
+
+  <span class="leaf a" aria-hidden="true">🌿</span>
+  <span class="leaf b" aria-hidden="true">🍃</span>
+  <span class="leaf c" aria-hidden="true">🌱</span>
+  <span class="leaf d" aria-hidden="true">🍃</span>
+  <span class="leaf e" aria-hidden="true">🌿</span>
+  <span class="leaf f" aria-hidden="true">🍃</span>
+
+  <!-- Bottom hills -->
+  <div class="hills" aria-hidden="true">
+    <svg viewBox="0 0 500 140" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <g class="hill-sway">
+        <path d="M0 70 Q125 20 250 60 T500 55 V140 H0 Z" fill="#2F7A45" opacity="0.55"/>
+      </g>
+      <path d="M0 95 Q140 55 290 90 T500 85 V140 H0 Z" fill="#1C5530"/>
+      <circle cx="70" cy="98" r="3" fill="#FFC857" opacity="0.6"/>
+      <circle cx="430" cy="104" r="2.5" fill="#FFC857" opacity="0.5"/>
+    </svg>
+  </div>
+
   <div class="card">
+    <div class="emblem" aria-hidden="true">
+      <div class="emblem-core">
+        <!-- leaf mark -->
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M5 19c0-7 5-13 14-14 0 9-5 14-12 14-1 0-2 0-2 0Z" fill="#fff"/>
+          <path d="M6 18C9 14 12 11 16 9" stroke="#246B3A" stroke-width="1.6" stroke-linecap="round"/>
+        </svg>
+      </div>
+    </div>
+
     <h1>Chiến binh xanh</h1>
-    <p id="msg">Đang mở ứng dụng…</p>
-    <a id="cta" class="btn hidden" href="#">Tải ứng dụng</a>
+    <p class="subtitle">Hành trình bảo vệ môi trường</p>
+
+    <div class="status" id="status">
+      <span class="spinner" id="spinner"></span>
+      <span id="msg">Đang mở ứng dụng…</span>
+    </div>
+
+    <a id="open" class="btn btn-primary" href="#">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Mở ứng dụng
+    </a>
+    <a id="store" class="btn btn-secondary hidden" href="#">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M12 4v11m0 0 4-4m-4 4-4-4M5 19h14" stroke="#246B3A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Tải ứng dụng
+    </a>
+
+    <p class="footer">🌱 Cùng nhau bảo vệ môi trường</p>
   </div>
 
   <script>
-    // The custom-scheme deep link this page bounces to. Keep in sync with
-    // DeepLinkConfig in the Flutter app (globalcitizen://ranking).
-    var APP_URL = 'globalcitizen://ranking';
+    // Keep in sync with DeepLinkConfig in the Flutter app.
+    var SCHEME = 'globalcitizen';
+    var HOST = 'ranking'; // globalcitizen://ranking
+    var ANDROID_PACKAGE = 'com.chienbinhxanh.globalcitizen';
 
     // Fill these in once the app is published. Leave empty to use FALLBACK.
-    var ANDROID_STORE = ''; // e.g. https://play.google.com/store/apps/details?id=com.chienbinhxanh.globalcitizen
-    var IOS_STORE = '';     // e.g. https://apps.apple.com/app/id0000000000
+    var ANDROID_STORE = ''; // https://play.google.com/store/apps/details?id=com.chienbinhxanh.globalcitizen
+    var IOS_STORE = '';     // https://apps.apple.com/app/id0000000000
     var FALLBACK = 'https://sites.google.com/view/chienbinhxanh/trang-ch%E1%BB%A7';
 
+    var ua = navigator.userAgent || '';
+    var isAndroid = /android/i.test(ua);
+    var isIOS = /iphone|ipad|ipod/i.test(ua);
+
     function storeUrl() {
-      var ua = navigator.userAgent || '';
-      if (/android/i.test(ua) && ANDROID_STORE) return ANDROID_STORE;
-      if (/iphone|ipad|ipod/i.test(ua) && IOS_STORE) return IOS_STORE;
+      if (isAndroid && ANDROID_STORE) return ANDROID_STORE;
+      if (isIOS && IOS_STORE) return IOS_STORE;
       return FALLBACK;
     }
 
-    // Attempt to open the app. If it opens, the browser is backgrounded and the
-    // timer below fires "late" (JS is paused), so we keep the app foreground.
-    var start = Date.now();
-    window.location.href = APP_URL;
+    // Android: an intent:// URL reliably launches the app (or auto-redirects to
+    // browser_fallback_url when not installed). iOS/other: the custom scheme.
+    function appUrl() {
+      if (isAndroid) {
+        return 'intent://' + HOST + '#Intent;scheme=' + SCHEME +
+          ';package=' + ANDROID_PACKAGE +
+          ';S.browser_fallback_url=' + encodeURIComponent(storeUrl()) + ';end';
+      }
+      return SCHEME + '://' + HOST;
+    }
 
+    function openApp() {
+      window.location.href = appUrl();
+    }
+
+    document.getElementById('open').addEventListener('click', function (e) {
+      e.preventDefault();
+      openApp();
+    });
+    document.getElementById('store').href = storeUrl();
+
+    // Try once automatically on load.
+    var start = Date.now();
+    openApp();
+
+    // If still here (not backgrounded into the app), reveal the store fallback.
     setTimeout(function () {
-      // Still here & not backgrounded => app likely not installed.
       if (Date.now() - start < 1800) {
-        var cta = document.getElementById('cta');
-        cta.href = storeUrl();
-        cta.classList.remove('hidden');
+        document.getElementById('spinner').classList.add('hidden');
+        document.getElementById('store').classList.remove('hidden');
         document.getElementById('msg').textContent =
           'Chưa cài ứng dụng? Tải ngay để xem bảng xếp hạng.';
       }

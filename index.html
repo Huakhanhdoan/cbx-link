@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Chiến binh xanh</title>
+  <meta property="og:title" content="Chiến binh xanh" />
+  <meta property="og:description" content="Xem bảng xếp hạng và cùng bảo vệ môi trường 🌱" />
+  <style>
+    :root { color-scheme: light; }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: linear-gradient(160deg, #246B3A, #5BB85D);
+      color: #fff;
+      padding: 24px;
+    }
+    .card {
+      max-width: 360px;
+      width: 100%;
+      text-align: center;
+      background: rgba(255, 255, 255, 0.10);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      border-radius: 24px;
+      padding: 32px 24px;
+      backdrop-filter: blur(6px);
+    }
+    h1 { font-size: 22px; margin: 0 0 8px; letter-spacing: 0.5px; }
+    p { margin: 0 0 20px; opacity: 0.92; line-height: 1.4; }
+    .btn {
+      display: inline-block;
+      text-decoration: none;
+      font-weight: 700;
+      background: #fff;
+      color: #246B3A;
+      padding: 12px 22px;
+      border-radius: 999px;
+      margin-top: 8px;
+    }
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Chiến binh xanh</h1>
+    <p id="msg">Đang mở ứng dụng…</p>
+    <a id="cta" class="btn hidden" href="#">Tải ứng dụng</a>
+  </div>
+
+  <script>
+    // The custom-scheme deep link this page bounces to. Keep in sync with
+    // DeepLinkConfig in the Flutter app (globalcitizen://ranking).
+    var APP_URL = 'globalcitizen://ranking';
+
+    // Fill these in once the app is published. Leave empty to use FALLBACK.
+    var ANDROID_STORE = ''; // e.g. https://play.google.com/store/apps/details?id=com.chienbinhxanh.globalcitizen
+    var IOS_STORE = '';     // e.g. https://apps.apple.com/app/id0000000000
+    var FALLBACK = 'https://sites.google.com/view/chienbinhxanh/trang-ch%E1%BB%A7';
+
+    function storeUrl() {
+      var ua = navigator.userAgent || '';
+      if (/android/i.test(ua) && ANDROID_STORE) return ANDROID_STORE;
+      if (/iphone|ipad|ipod/i.test(ua) && IOS_STORE) return IOS_STORE;
+      return FALLBACK;
+    }
+
+    // Attempt to open the app. If it opens, the browser is backgrounded and the
+    // timer below fires "late" (JS is paused), so we keep the app foreground.
+    var start = Date.now();
+    window.location.href = APP_URL;
+
+    setTimeout(function () {
+      // Still here & not backgrounded => app likely not installed.
+      if (Date.now() - start < 1800) {
+        var cta = document.getElementById('cta');
+        cta.href = storeUrl();
+        cta.classList.remove('hidden');
+        document.getElementById('msg').textContent =
+          'Chưa cài ứng dụng? Tải ngay để xem bảng xếp hạng.';
+      }
+    }, 1200);
+  </script>
+</body>
+</html>
